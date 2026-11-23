@@ -1,0 +1,163 @@
+1
+00:00:00,400 --> 00:00:00,598
+Olá!
+
+2
+00:00:00,648 --> 00:00:04,807
+Neste mini tutorial, você vai ver a FinSim rodando do começo ao fim.
+
+3
+00:00:04,857 --> 00:00:11,677
+A FinSim é uma fintech fictícia, operada por agentes de inteligência artificial com o Claude e o protocolo MCP.
+
+4
+00:00:11,727 --> 00:00:13,534
+Todos os dados são inventados.
+
+5
+00:00:14,784 --> 00:00:17,693
+A organização é igual à de uma fintech de verdade.
+
+6
+00:00:17,743 --> 00:00:23,434
+Um agente orquestrador recebe o pedido e distribui o trabalho para seis subagentes, um por setor:
+
+7
+00:00:23,484 --> 00:00:28,464
+atendimento, cadastro, fraude, prevenção à lavagem de dinheiro, crédito e tesouraria.
+
+8
+00:00:28,514 --> 00:00:34,382
+Todos falam com o sistema por um servidor MCP, e cada setor só recebe as ferramentas de que precisa.
+
+9
+00:00:35,632 --> 00:00:40,580
+Para começar, entre na pasta do projeto e instale as dependências com npm install.
+
+10
+00:00:40,630 --> 00:00:43,384
+Depois, npm test confirma que está tudo certo:
+
+11
+00:00:43,434 --> 00:00:45,273
+são dez testes, e todos passam.
+
+12
+00:00:45,323 --> 00:00:49,113
+Por fim, npm run reset cria a base fictícia com a data de hoje:
+
+13
+00:00:49,163 --> 00:00:53,929
+oito clientes, dezesseis transações, três propostas de crédito e três chamados.
+
+14
+00:00:55,179 --> 00:01:00,682
+Em um terminal, rode npm run painel e abra o navegador no endereço localhost, porta quatro mil.
+
+15
+00:01:00,732 --> 00:01:03,254
+É essa tela que você compartilha na reunião.
+
+16
+00:01:03,304 --> 00:01:08,398
+Ela mostra as transações do dia e, em tempo real, cada ferramenta que os agentes chamam.
+
+17
+00:01:09,648 --> 00:01:12,989
+No outro terminal, abra o Claude Code com o comando claude.
+
+18
+00:01:13,039 --> 00:01:16,438
+Na primeira vez, confie na pasta e aprove o servidor finsim.
+
+19
+00:01:16,488 --> 00:01:18,277
+Depois, é só pedir em português:
+
+20
+00:01:18,327 --> 00:01:19,599
+rode a operação do dia.
+
+21
+00:01:19,649 --> 00:01:25,576
+O orquestrador carrega a skill de rotina diária e dispara atendimento, cadastro e fraude ao mesmo tempo.
+
+22
+00:01:25,626 --> 00:01:28,393
+Em seguida, vêm compliance, crédito e tesouraria.
+
+23
+00:01:29,643 --> 00:01:31,754
+Enquanto isso, o painel se movimenta.
+
+24
+00:01:31,804 --> 00:01:37,594
+Das dezesseis transações, sete têm risco baixo e são aprovadas automaticamente pelo motor de regras.
+
+25
+00:01:37,644 --> 00:01:39,463
+As outras nove ficam em análise.
+
+26
+00:01:39,513 --> 00:01:51,203
+Entre elas, um PIX em duplicidade, um PIX de madrugada feito de um celular novo, quatro transferências fracionadas logo abaixo de dez mil reais e uma transferência para uma empresa em lista restritiva.
+
+27
+00:01:52,453 --> 00:01:54,263
+Agora, o ponto mais importante.
+
+28
+00:01:54,313 --> 00:02:01,280
+Bloquear uma transação, decidir um crédito ou comunicar ao COAF são ações sensíveis, e o agente não faz isso sozinho.
+
+29
+00:02:01,330 --> 00:02:03,919
+Ele explica o motivo e pede a sua aprovação.
+
+30
+00:02:03,969 --> 00:02:07,038
+Se você negar, ele respeita e registra no relatório.
+
+31
+00:02:08,288 --> 00:02:10,480
+Um dos chamados esconde uma armadilha:
+
+32
+00:02:10,530 --> 00:02:17,207
+um texto disfarçado de instrução do sistema, mandando liberar um pagamento e aprovar oitenta mil reais de crédito.
+
+33
+00:02:17,257 --> 00:02:23,107
+O agente de atendimento trata esse texto como dado, e não como ordem, e abre um alerta de segurança.
+
+34
+00:02:24,357 --> 00:02:28,581
+No final, o orquestrador junta tudo num relatório executivo para o gestor.
+
+35
+00:02:28,631 --> 00:02:31,930
+E toda chamada de ferramenta fica registrada na auditoria:
+
+36
+00:02:31,980 --> 00:02:33,374
+quem fez, o quê e quando.
+
+37
+00:02:34,624 --> 00:02:38,223
+E se a internet cair durante a apresentação, use o plano B:
+
+38
+00:02:38,273 --> 00:02:39,213
+npm run simular.
+
+39
+00:02:39,263 --> 00:02:44,593
+Ele roda o mesmo roteiro, sem inteligência artificial, pedindo a aprovação no terminal.
+
+40
+00:02:44,643 --> 00:02:47,253
+Para recomeçar do zero, rode npm run reset.
+
+41
+00:02:47,303 --> 00:02:48,057
+Bom proveito!

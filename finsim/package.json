@@ -1,0 +1,19 @@
+{
+  "name": "finsim-demo",
+  "version": "1.0.0",
+  "description": "FinSim: fintech fictícia operada por agentes e subagentes de IA via MCP (demo da palestra IA na Prática)",
+  "type": "module",
+  "private": true,
+  "engines": { "node": ">=20" },
+  "scripts": {
+    "reset": "node src/seed.js",
+    "painel": "node src/painel.js",
+    "simular": "node src/simular.js",
+    "mcp": "node src/mcp-server.js",
+    "test": "node --test"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.32.2",
+    "zod": "^3.25.76"
+  }
+}

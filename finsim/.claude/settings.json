@@ -1,0 +1,32 @@
+{
+  "enableAllProjectMcpServers": true,
+  "permissions": {
+    "allow": [
+      "Read",
+      "mcp__finsim__consultar_cliente",
+      "mcp__finsim__consultar_saldo",
+      "mcp__finsim__listar_transacoes",
+      "mcp__finsim__validar_transacao",
+      "mcp__finsim__verificar_lista_restritiva",
+      "mcp__finsim__registrar_alerta",
+      "mcp__finsim__listar_propostas_credito",
+      "mcp__finsim__consultar_proposta",
+      "mcp__finsim__listar_kyc_pendentes",
+      "mcp__finsim__verificar_kyc",
+      "mcp__finsim__registrar_decisao_kyc",
+      "mcp__finsim__listar_chamados",
+      "mcp__finsim__responder_chamado",
+      "mcp__finsim__resumo_tesouraria",
+      "mcp__finsim__conciliar_dia",
+      "mcp__finsim__gerar_relatorio",
+      "mcp__finsim__consultar_auditoria"
+    ],
+    "ask": [
+      "mcp__finsim__bloquear_transacao",
+      "mcp__finsim__liberar_transacao",
+      "mcp__finsim__registrar_decisao_credito",
+      "mcp__finsim__comunicar_coaf"
+    ],
+    "deny": ["Bash", "Write", "Edit", "WebFetch", "WebSearch"]
+  }
+}

@@ -1,0 +1,116 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>FinSim · Painel de operações</title>
+<style>
+  :root { --ink:#1B2333; --night:#0E1626; --card:#F2F4F8; --coral:#D9653B; --teal:#1F8A80; --amber:#E8B04B; --slate:#5B6B85; --line:#E1E5EC; }
+  * { box-sizing: border-box; }
+  body { margin:0; font-family: Calibri, "Segoe UI", system-ui, sans-serif; color:var(--ink); background:#fff; }
+  header { background:var(--night); color:#fff; padding:16px 28px; display:flex; align-items:center; gap:16px; flex-wrap:wrap; }
+  header h1 { font-size:22px; margin:0; }
+  header .tag { color:var(--coral); font-weight:700; letter-spacing:.08em; font-size:12px; }
+  header .sp { flex:1; }
+  header button { background:transparent; color:#fff; border:1px solid #fff6; border-radius:8px; padding:6px 12px; cursor:pointer; font:inherit; }
+  main { padding:20px 28px; display:grid; gap:20px; grid-template-columns: 1.4fr 1fr; }
+  .kpis { grid-column:1/-1; display:grid; grid-template-columns:repeat(6,1fr); gap:12px; }
+  .kpi { background:var(--card); border-radius:12px; padding:12px 14px; }
+  .kpi b { display:block; font-size:30px; }
+  .kpi span { color:var(--slate); font-size:13px; }
+  section { background:var(--card); border-radius:12px; padding:14px 16px; min-width:0; }
+  section h2 { font-size:16px; margin:0 0 10px; }
+  table { width:100%; border-collapse:collapse; font-size:14px; }
+  th, td { text-align:left; padding:6px 8px; border-bottom:1px solid var(--line); vertical-align:top; }
+  th { color:var(--slate); font-weight:600; font-size:12px; text-transform:uppercase; letter-spacing:.04em; }
+  .pill { display:inline-block; border-radius:999px; padding:1px 9px; font-size:12px; font-weight:700; color:#fff; white-space:nowrap; }
+  .pendente { background:#9AA5B8; } .aprovada { background:var(--teal); } .em_analise { background:var(--amber); color:var(--ink); } .bloqueada { background:var(--coral); }
+  .risco-alto { color:var(--coral); font-weight:700; } .risco-medio { color:#a77712; font-weight:700; }
+  .feed { max-height:420px; overflow:auto; font-size:13px; }
+  .ev { padding:6px 0; border-bottom:1px solid var(--line); }
+  .ev .who { font-weight:700; color:var(--teal); } .ev .sens { color:var(--coral); font-weight:700; }
+  .ev .res { color:var(--slate); word-break:break-word; }
+  .new { animation: flash 1.6s ease-out; } @keyframes flash { from { background:#F8E3D9; } to { background:transparent; } }
+  pre { white-space:pre-wrap; font-family:inherit; font-size:14px; margin:0; }
+  .muted { color:var(--slate); font-size:13px; }
+  @media (max-width: 900px) { main { grid-template-columns:1fr; } .kpis { grid-template-columns:repeat(2,1fr); } }
+</style>
+</head>
+<body>
+<header>
+  <div><div class="tag">DADOS FICTÍCIOS · DEMO</div><h1>FinSim · Painel de operações</h1></div>
+  <div class="sp"></div>
+  <span id="data" class="muted" style="color:#CFD6E2"></span>
+  <button id="reset" title="Recria a base fictícia">Reiniciar base</button>
+</header>
+<main>
+  <div class="kpis" id="kpis"></div>
+  <section>
+    <h2>Transações do dia</h2>
+    <table><thead><tr><th>ID</th><th>Conta</th><th>Tipo</th><th>Valor</th><th>Hora</th><th>Destino</th><th>Risco</th><th>Status</th></tr></thead><tbody id="tx"></tbody></table>
+  </section>
+  <section>
+    <h2>O que os agentes estão fazendo</h2>
+    <div class="feed" id="feed"><p class="muted">Aguardando a primeira chamada de ferramenta...</p></div>
+  </section>
+  <section>
+    <h2>Decisões registradas</h2>
+    <table><thead><tr><th>Ação</th><th>Ref.</th><th>Resultado</th><th>Agente</th></tr></thead><tbody id="dec"></tbody></table>
+    <h2 style="margin-top:16px">Alertas</h2>
+    <table><thead><tr><th>ID</th><th>Setor</th><th>Tipo</th><th>Descrição</th></tr></thead><tbody id="alertas"></tbody></table>
+  </section>
+  <section>
+    <h2>Último relatório</h2>
+    <pre id="rel" class="muted">Nenhum relatório gerado ainda.</pre>
+  </section>
+</main>
+<script>
+  const brl = (v) => v.toLocaleString("pt-BR", { style: "currency", currency: "BRL" });
+  const el = (tag, text, cls) => { const e = document.createElement(tag); if (text != null) e.textContent = text; if (cls) e.className = cls; return e; };
+  const row = (cells) => { const tr = document.createElement("tr"); cells.forEach((c) => { const td = document.createElement("td"); c instanceof Node ? td.appendChild(c) : (td.textContent = c); tr.appendChild(td); }); return tr; };
+  let visto = 0;
+
+  function render(s) {
+    document.getElementById("data").textContent = `${s.empresa} · ${s.data_referencia}`;
+    const n = (st) => s.transacoes.filter((t) => t.status === st).length;
+    const kpis = [
+      [s.transacoes.length, "transações hoje"], [n("aprovada"), "aprovadas"], [n("em_analise"), "em análise"], [n("bloqueada"), "bloqueadas"],
+      [s.alertas.length, "alertas abertos"], [s.auditoria.length, "chamadas de ferramenta"],
+    ];
+    const k = document.getElementById("kpis"); k.replaceChildren();
+    kpis.forEach(([v, l]) => { const d = el("div", null, "kpi"); d.append(el("b", String(v)), el("span", l)); k.appendChild(d); });
+
+    const tx = document.getElementById("tx"); tx.replaceChildren();
+    s.transacoes.forEach((t) => tx.appendChild(row([t.id, t.conta_id, t.tipo, brl(t.valor), t.data_hora.slice(11, 16), t.destino.nome,
+      el("span", t.risco || "-", t.risco ? "risco-" + t.risco : ""), el("span", t.status.replace("_", " "), "pill " + t.status)])));
+
+    const dec = document.getElementById("dec"); dec.replaceChildren();
+    if (!s.decisoes.length) dec.appendChild(row(["-", "-", "nenhuma ainda", "-"]));
+    s.decisoes.forEach((d) => dec.appendChild(row([d.tipo, d.referencia, d.decisao, d.agente])));
+
+    const al = document.getElementById("alertas"); al.replaceChildren();
+    if (!s.alertas.length) al.appendChild(row(["-", "-", "-", "nenhum ainda"]));
+    s.alertas.forEach((a) => al.appendChild(row([a.id, a.setor, a.tipo, a.descricao])));
+
+    const feed = document.getElementById("feed");
+    if (s.auditoria.length !== visto) {
+      feed.replaceChildren();
+      [...s.auditoria].reverse().forEach((a, i) => {
+        const d = el("div", null, "ev" + (s.auditoria.length - i > visto ? " new" : ""));
+        d.append(el("span", a.ts.slice(11, 19) + "  ", "muted"), el("span", a.agente, "who"), el("span", " → " + a.ferramenta + " "));
+        if (a.sensivel) d.append(el("span", "· ação sensível", "sens"));
+        const args = JSON.stringify(a.args); d.append(el("div", (args.length > 120 ? args.slice(0, 117) + "..." : args) + "  ⇒  " + a.resultado, "res"));
+        feed.appendChild(d);
+      });
+      visto = s.auditoria.length;
+    }
+    const r = s.relatorios[s.relatorios.length - 1];
+    document.getElementById("rel").textContent = r ? `${r.titulo}\n\n${r.conteudo}` : "Nenhum relatório gerado ainda.";
+  }
+
+  async function tick() { try { render(await (await fetch("/api/estado")).json()); } catch (e) {} }
+  document.getElementById("reset").onclick = async () => { await fetch("/api/reset", { method: "POST" }); visto = 0; tick(); };
+  tick(); setInterval(tick, 1500);
+</script>
+</body>
+</html>
