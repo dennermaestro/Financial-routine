@@ -1,0 +1,8 @@
+{
+  "mcpServers": {
+    "finsim": {
+      "command": "node",
+      "args": ["src/mcp-server.js"]
+    }
+  }
+}
